@@ -4,40 +4,48 @@
     <title>My First Three.js Page</title>
     <script src="js/Three.js"></script>
     <script>
+        //the entire program is contained within this onLoad() function, triggered by the page
         function onLoad(){
 
+            //grab the page element that will be used to render the WebGL, and save it in container
             //grab container div
             var container = document.getElementById("container");
 
-            //create the Three.js renderer, and add it to the div
+            //initialize the Three.js renderer object, and add it to the div
             var renderer = new THREE.WebGLRenderer();
+            //construct renderer object, size it to the same size as the container and add it to the DOM child element of the container
             renderer.setSize(container.offsetWidth, container.offsetHeight);
             container.appendChild( renderer. domElement );
 
-            // create a scene
+            // 1. create a scene, contains all other graphical objects
             var scene = new THREE.Scene();
 
-            //create a camera and add it to the scene
-            //Three.PerspectiveCamera( fov, aspect, near, far )
+            /*
+            2. create a camera and add it to the scene
+            defines where we are viewing the scene form
+            Using a transform to set its position property to 3.3333 units (a little bit back) from the origin
+
+            Three.PerspectiveCamera( fov, aspect, near, far )
+            */
             var camera = new THREE.PerspectiveCamera (45, container.offsetWidth / container.offsetHeight, 1, 4000);
             camera.position.set(0,0, 3.3333 );
             scene.add( camera );
 
 
-
+            //3. draw
             //create a rectangle and add it to the scene
             var geometry = new THREE.PlaneGeometry( 1, 1);
+            // Mesh, composed of a geometry object and a material
             var mesh = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( ) );
             scene.add( mesh );
 
 
-            //render it
+            //finally, render it
             renderer.render( scene, camera );
         }
 
     </script>
 </head>
-
 <body onLoad="onLoad();">
     <div id="container"
      style="width: 500px; height: 500px; background-color:#000000">
