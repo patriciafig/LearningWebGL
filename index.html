@@ -2,23 +2,51 @@
 <html>
 <head>
     <title>My First Three.js Page</title>
+
     <script src="js/Three.js"></script>
     <script>
         //the entire program is contained within this onLoad() function, triggered by the page
-        function onLoad(){
+        function onLoad() {
+
+
+
+            var cube;
+            var cubeSizeLength = 100;
+            var goldColor = "#FFDF00";
+            var showFrame = true;
+            var wireMaterial = new THREE.MeshBasicMaterial({color: goldColor, wireframe: showFrame});
+            var cubeGeometry = new THREE.CubeGeometry(cubeSizeLength, cubeSizeLength, cubeSizeLength);
+
+            cube = new THREE.Mesh(cubeGeometry, wireMaterial);
+            cube.position.x = 0;   // center at the origin
+            cube.position.y = 0;
+            cube.position.z = 0;
+
+            scene.add(cube);
+
+        }
+
+        function init () {
 
             //grab the page element that will be used to render the WebGL, and save it in container
             //grab container div
             var container = document.getElementById("container");
 
             //initialize the Three.js renderer object, and add it to the div
-            var renderer = new THREE.WebGLRenderer();
-            //construct renderer object, size it to the same size as the container and add it to the DOM child element of the container
-            renderer.setSize(container.offsetWidth, container.offsetHeight);
-            container.appendChild( renderer. domElement );
+            var renderer = new THREE.WebGLRenderer({antialias: true});
 
             // 1. create a scene, contains all other graphical objects
             var scene = new THREE.Scene();
+            //Light
+            scene.add(new THREE.AmbientLight(0x222222));
+            scene.fog = new THREE.Fog(0x808080, 2000, 4000);
+
+            renderer.gammaInput = true;
+            renderer.gammaOutput = true;
+            //construct renderer object, size it to the same size as the container and add it to the DOM child element of the container
+            renderer.setSize(container.offsetWidth, container.offsetHeight);
+            renderer.setClearColor(scene.fog.color, 1);
+            container.appendChild(renderer.domElement);
 
             /*
             2. create a camera and add it to the scene
@@ -27,22 +55,41 @@
 
             Three.PerspectiveCamera( fov, aspect, near, far )
             */
-            var camera = new THREE.PerspectiveCamera (45, container.offsetWidth / container.offsetHeight, 1, 4000);
-            camera.position.set(0,0, 3.3333 );
+            var camera = new THREE.PerspectiveCamera(45, container.offsetWidth / container.offsetHeight, 1, 4000);
+            camera.position.set(0, 0, 3.3333);
+
+            //Controls
+            cameraControls = new THREE.OrbitAndPanControls(camera, renderer.domElement);
+            cameraControls.target.set(0, 0, 0);
+
+
+            //draw a coordinate grid
+            Coordinates.drawGrid({size: 1000, scale: 0.01});
+            Coordinates.drawGrid({size: 1000, scale: 0.01, orientation: "y"});
+            Coordinates.drawGrid({size: 1000, scale: 0.01, orientation: "z"})
+
             scene.add( camera );
-
-
-            //3. draw
-            //create a rectangle and add it to the scene
-            var geometry = new THREE.PlaneGeometry( 1, 1);
-            // Mesh, composed of a geometry object and a material
-            var mesh = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( ) );
-            scene.add( mesh );
-
-
-            //finally, render it
-            renderer.render( scene, camera );
         }
+
+
+         function animate() {
+             //3. draw
+             //create a rectangle and add it to the scene
+             requestAnimationFrame(animate);
+             render();
+         }
+
+         function render() {
+            var delta = clock.getDelta();
+            cameraControls.update(delta);
+            render.render( scene, camera );
+
+         }
+
+         init();
+         onLoad();
+         animate();
+
 
     </script>
 </head>
