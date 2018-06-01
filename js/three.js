@@ -35506,7 +35506,7 @@
 
 			if ( from !== 0 || to !== nKeys ) {
 
-				// empty tracks are forbidden, so keep at least one keyframe
+				// empty tracks are fbidden, so keep at least one keyframe
 				if ( from >= to ) to = Math.max( to, 1 ), from = to - 1;
 
 				var stride = this.getValueSize();

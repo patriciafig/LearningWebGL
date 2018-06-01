@@ -1,65 +1,80 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/html">
 <head>
     <title>My First Three.js Page</title>
 
     <script src="js/Three.js"></script>
+    <script src="js/src/Coordinates.js"></script>
+    <script src="js/examples/js/controls/OrbitControls.js"></script>
+
     <script>
-        //the entire program is contained within this onLoad() function, triggered by the page
-        function onLoad() {
+        //the entire program is contained within this DrawCube() function, triggered by the page
+        var camera, scene, renderer;
+        var windowScale;
+        var cameraControls;
+        var clock = new THREE.Clock();
 
-
+        function DrawCube() {
 
             var cube;
             var cubeSizeLength = 100;
             var goldColor = "#FFDF00";
             var showFrame = true;
-            var wireMaterial = new THREE.MeshBasicMaterial({color: goldColor, wireframe: showFrame});
-            var cubeGeometry = new THREE.CubeGeometry(cubeSizeLength, cubeSizeLength, cubeSizeLength);
+            var wireMaterial = new THREE.MeshBasicMaterial( { color: goldColor, wireframe: showFrame} );
 
-            cube = new THREE.Mesh(cubeGeometry, wireMaterial);
-            cube.position.x = 0;   // center at the origin
+            var cubeGeometry = new THREE.CubeGeometry( cubeSizeLength, cubeSizeLength, cubeSizeLength );
+
+            cube = new THREE.Mesh( cubeGeometry, wireMaterial );
+            cube.position.x = 0;   // centered at the origin
             cube.position.y = 0;
             cube.position.z = 0;
-
-            scene.add(cube);
+            scene.add( cube );
 
         }
 
         function init () {
 
+            var canvasWidth = 846;
+            var canvasHeight = 494;
+
+            //var canvasWidth = window.innerWidth;
+            //var canvasHeight = window.innerHeight;
+
+            var canvasRatio = canvasWidth / canvasHeight;
+
+            // SCENE
+            scene = new THREE.Scene();
+            scene.fog = new THREE.Fog(0x808080, 2000, 4000);
+            //Light
+            scene.add(new THREE.AmbientLight(0x222222));
+
+            //RENDERER
+
+            //initialize the Three.js renderer object, and add it to the div
+            renderer = new THREE.WebGLRenderer( { antialias: true } );
+            //construct renderer object, size it to the same size as the container and add it to the DOM child element of the container
+            renderer.gammaInput = true;
+            renderer.gammaOutput = true;
+            renderer.setSize(canvasWidth, canvasHeight);
+            renderer.setClearColor(scene.fog.color, 1);
+
             //grab the page element that will be used to render the WebGL, and save it in container
             //grab container div
             var container = document.getElementById("container");
-
-            //initialize the Three.js renderer object, and add it to the div
-            var renderer = new THREE.WebGLRenderer({antialias: true});
-
-            // 1. create a scene, contains all other graphical objects
-            var scene = new THREE.Scene();
-            //Light
-            scene.add(new THREE.AmbientLight(0x222222));
-            scene.fog = new THREE.Fog(0x808080, 2000, 4000);
-
-            renderer.gammaInput = true;
-            renderer.gammaOutput = true;
-            //construct renderer object, size it to the same size as the container and add it to the DOM child element of the container
-            renderer.setSize(container.offsetWidth, container.offsetHeight);
-            renderer.setClearColor(scene.fog.color, 1);
             container.appendChild(renderer.domElement);
 
-            /*
+            /* CAMERA
             2. create a camera and add it to the scene
             defines where we are viewing the scene form
             Using a transform to set its position property to 3.3333 units (a little bit back) from the origin
 
             Three.PerspectiveCamera( fov, aspect, near, far )
             */
-            var camera = new THREE.PerspectiveCamera(45, container.offsetWidth / container.offsetHeight, 1, 4000);
-            camera.position.set(0, 0, 3.3333);
+            camera = new THREE.PerspectiveCamera(45, canvasRatio, 1, 4000);
+            camera.position.set(-200, 200, -150);
 
             //Controls
-            cameraControls = new THREE.OrbitAndPanControls(camera, renderer.domElement);
+            cameraControls = new THREE.OrbitControls(camera, renderer.domElement);
             cameraControls.target.set(0, 0, 0);
 
 
@@ -87,13 +102,13 @@
          }
 
          init();
-         onLoad();
+         DrawCube();
          animate();
 
 
     </script>
 </head>
-<body onLoad="onLoad();">
+<body onLoad="DrawCube();">
     <div id="container"
      style="width: 500px; height: 500px; background-color:#000000">
     </div>
